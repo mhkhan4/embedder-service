@@ -31,7 +31,7 @@ def load_model() -> None:
     _model = BGEM3FlagModel(
         settings.model_name,
         use_fp16=settings.use_fp16,
-        devices="cpu",
+        devices=settings.devices,
     )
     logger.info("Model loaded.")
 

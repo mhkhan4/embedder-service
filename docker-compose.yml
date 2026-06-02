@@ -1,0 +1,9 @@
+services:
+  embedding-service:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ~/.cache/huggingface:/root/.cache/huggingface
+    env_file:
+      - .env
