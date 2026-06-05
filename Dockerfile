@@ -4,14 +4,11 @@ WORKDIR /app
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
+    zlib1g-dev \
     && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
-
-# Pre-download the model at build time so cold start is load-from-disk, not download
-# Pre-download on CPU only — use_fp16=False avoids GPU init on CUDA-capable build agents
-RUN python -c "from FlagEmbedding import BGEM3FlagModel; BGEM3FlagModel('BAAI/bge-m3', use_fp16=False, devices='cpu')"
 
 COPY app/ ./app/
 
