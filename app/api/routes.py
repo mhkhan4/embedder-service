@@ -1,6 +1,7 @@
 import logging
+import secrets
 
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, Depends, Header, HTTPException, status
 
 from app import model as embedder
 from app.config import settings
@@ -17,7 +18,12 @@ logger = logging.getLogger(__name__)
 router = APIRouter()
 
 
-@router.post("/embed", response_model=EmbedResponse)
+def _verify_api_key(x_api_key: str = Header(..., alias="X-API-Key")) -> None:
+    if settings.api_key and not secrets.compare_digest(x_api_key, settings.api_key):
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid API key.")
+
+
+@router.post("/embed", response_model=EmbedResponse, dependencies=[Depends(_verify_api_key)])
 async def embed(req: EmbedRequest) -> EmbedResponse:
     if len(req.texts) > settings.max_texts_per_request:
         raise HTTPException(

@@ -18,6 +18,9 @@ class Settings(BaseSettings):
     torch_num_threads: int = 0
     max_texts_per_request: int = 128
 
+    # Static API key for request authentication. Empty string disables auth (local dev).
+    api_key: str = ""
+
     class Config:
         env_file = ".env"
 
